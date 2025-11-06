@@ -1,0 +1,368 @@
+/* Gallery.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+.gallery-container {
+  min-height: 100vh;
+  background: #473E1D;
+  background: radial-gradient(circle, rgba(71, 62, 29, 1) 0%, rgba(31, 31, 31, 1) 100%);
+  padding: 4rem 2rem;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.gallery-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  color: rgb(252, 227, 95);
+}
+
+.gallery-header h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-header p {
+  font-size: 1.2rem;
+  color: rgb(205, 209, 214);
+  font-weight: 300;
+}
+
+.loading-container,
+.error-container {
+  text-align: center;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  color: white;
+}
+
+.loading-container {
+  background: rgba(252, 227, 95, 0.1);
+  border: 1px solid rgba(252, 227, 95, 0.3);
+}
+
+.error-container {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.events-slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.event-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: #121212;
+  border-radius: 16px;
+  padding: 2rem 3rem;
+  box-shadow: 
+    0 10px 25px #101010,
+    0 0 30px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  margin: 20px 0;
+}
+
+.event-container:hover {
+  box-shadow: 
+    0 20px 40px #101010,
+    0 0 50px rgba(255, 191, 0, 0.4);
+  transform: translateY(-5px);
+}
+
+.event-info {
+  align-self: flex-start;
+  color: white;
+  max-width: 400px;
+}
+
+.event-info h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: rgb(252, 227, 95);
+}
+
+.event-info p {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.event-date {
+  font-size: 0.85rem;
+  color: #4c1d95;
+  font-weight: 600;
+  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #a78bfa;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.2);
+  display: inline-block;
+}
+
+.images-slider {
+  flex: 1;
+  overflow: hidden;
+  border-radius: 12px;
+  position: relative;
+  padding: 60px 0;
+  margin: -60px 0;
+}
+
+.images-track {
+  display: flex;
+  gap: 1rem;
+  transition: none;
+  will-change: transform;
+  align-items: center;
+  height: 100%;
+}
+
+@keyframes slideInfinite {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slideFromCurrent {
+  0% {
+    transform: translateX(var(--start-x));
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.image-slide {
+  flex: 0 0 400px;
+  height: 280px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  transform-origin: center center;
+  z-index: 1;
+}
+
+.image-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: none;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 2.5rem;
+  width: 100%;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.close-button {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #666;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background-color: #f5f5f5;
+  color: #333;
+  transform: scale(1.1);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 2.5rem;
+  width: 100%;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.close-button {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #666;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.modal-content h2 {
+  font-size: 2.2rem;
+  margin-bottom: 0.8rem;
+  color: #333;
+  padding-right: 3rem;
+}
+
+.modal-content p {
+  color: #666;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.modal-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.modal-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.modal-image:hover {
+  transform: scale(1.03);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .event-container {
+    gap: 1.5rem;
+  }
+  
+  .event-info {
+    text-align: center;
+    max-width: none;
+  }
+  
+  .gallery-header h1 {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-container {
+    padding: 3rem 1rem;
+  }
+  
+  .gallery-header h1 {
+    font-size: 2rem;
+  }
+  
+  .event-container {
+    padding: 1.5rem;
+  }
+  
+  .event-info h3 {
+    font-size: 1.5rem;
+  }
+  
+  .image-slide {
+    flex: 0 0 200px;
+    height: 150px;
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  .modal-images {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .gallery-header p {
+    font-size: 1rem;
+  }
+  
+  .event-info h3 {
+    font-size: 1.3rem;
+  }
+  
+  .image-slide {
+    flex: 0 0 180px;
+    height: 130px;
+  }
+}
