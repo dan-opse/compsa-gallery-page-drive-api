@@ -1,163 +1,114 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import './Gallery.css';
-import { fetchAllEventImages } from '../services/googleDriveService';
 
 const Gallery = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [hoveredRowId, setHoveredRowId] = useState(null);
   const [animatingRows, setAnimatingRows] = useState(new Set());
-  const [eventImages, setEventImages] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   
   const trackRefs = useRef({});
   const animationStates = useRef({});
 
-  // Event data with COMPSA events - ADD YOUR FOLDER IDs HERE
+  // Event data with COMPSA events
   const events = [
     {
       id: 1,
       title: "Cruise",
       description: "COMPSA annual cruise event",
-      folderId: "1CqViy79QBKEmbzw0GIquIZ4jjDw0rwK8",
-      images: [], // Will be populated from Google Drive
+      folder: "cruise",
+      images: Array.from({ length: 49 }, (_, i) => `compsacruise-${i + 1}.jpg`),
       date: "November 2025"
     },
     {   
       id: 2,
       title: "QWIC Welcome Home Night",
       description: "Welcome home celebration for QWIC members",
-      folderId: "1Dm8XW-vuQir4VR3iATseTpN0oqmEMrCt",
-      images: [],
+      folder: "qwic-welcome",
+      images: Array.from({ length: 24 }, (_, i) => `qwic-${String(i + 1).padStart(3, '0')}.jpg`),
       date: "October 2025"
     },
     {
       id: 3,
       title: "AI Collective",
       description: "AI and machine learning workshop collective",
-      folderId: "1aA8oTs6VvLakyU6Zo-y1oqEOCHqdNn-_",
-      images: [],
+      folder: "ai-collective",
+      images: Array.from({ length: 60 }, (_, i) => `aicollective-${i + 1}.jpg`),
       date: "September 2025"
     },
     {
       id: 4,
       title: "Orientation 2025",
       description: "Welcome new students to COMPSA",
-      folderId: "1cES9baR3QQ3L_XfRbul4iN4Ii4jZCL8L",
-      images: [],
+      folder: "orientation-2025",
+      images: Array.from({ length: 53 }, (_, i) => `orientation-${String(i + 1).padStart(3, '0')}.jpg`),
       date: "September 2025"
     },
     {
       id: 5,
       title: "Resume Roast",
       description: "Get feedback on your resume from professionals",
-      folderId: "1xdurCURrawU0c5xlro7O1j0cyjcB16fX",
-      images: [],
+      folder: "resume-roast",
+      images: Array.from({ length: 15 }, (_, i) => `resume-${String(i + 1).padStart(3, '0')}.jpg`),
       date: "August 2025"
     },
     {
       id: 6,
       title: "COMPSA Group Shots",
       description: "Official COMPSA team photography session",
-      folderId: "1V2g2B30cvt5GOWkIgpPRVw556-wejKog",
-      images: [],
+      folder: "group-shots",
+      images: Array.from({ length: 21 }, (_, i) => `group-${String(i + 1).padStart(3, '0')}.jpg`),
       date: "July 2025"
     },
     {
       id: 7,
       title: "2025 Formal",
       description: "Annual COMPSA formal dinner and dance",
-      folderId: "1JC998FxRyrRRytJsCeVLx-3uuZuO5qFW",
-      images: [],
+      folder: "formal-2025",
+      images: Array.from({ length: 178 }, (_, i) => `compsa-formal-${String(i + 1).padStart(3, '0')}.jpg`),
       date: "May 2025"
     },
     {
       id: 8,
       title: "2025 Merch Shoot",
       description: "Photography session for COMPSA merchandise",
-      folderId: "1qh-HDs9jEBdgXyZ9W9UuGfpWdwbKH7G9",
-      images: [],
+      folder: "merch-shoot",
+      images: Array.from({ length: 103 }, (_, i) => `merch-${String(i + 1).padStart(3, '0')}.jpg`),
       date: "April 2025"
     },
     {
       id: 9,
       title: "COMPSA Basketball Tournament",
       description: "Annual basketball competition between teams",
-      folderId: "1RhXuxj2BicHRvqhlJNsB4LmiVtqdsD4p",
-      images: [],
+      folder: "basketball",
+      images: Array.from({ length: 128 }, (_, i) => `bball-${String(i + 1).padStart(3, '0')}.jpg`),
       date: "March 2025"
     },
     {
       id: 10,
       title: "2025 Fall Night Out",
       description: "Fall semester social gathering for students",
-      folderId: "1Lnhu3W9BJwO7VEaoXiCUeL7Q9dHhib0M",
-      images: [],
+      folder: "fall-night",
+      images: Array.from({ length: 172 }, (_, i) => `fno-${String(i + 1).padStart(3, '0')}.jpg`),
       date: "October 2024"
     },
     {
       id: 11,
       title: "2024 Soccer Tournament",
       description: "Soccer competition from the previous year",
-      folderId: "15-fC7LgZeVXe9h9bxXgptRqu5LUtOpQ-",
-      images: [],
+      folder: "soccer-2024",
+      images: Array.from({ length: 97 }, (_, i) => `soccer-${String(i + 1).padStart(3, '0')}.jpg`),
       date: "September 2024"
     }
   ];
 
-  // Fetch images from Google Drive on component mount
-  useEffect(() => {
-    const loadImages = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        console.log('🔄 useEffect triggered - Starting to load images...');
-        
-        // Filter events that have folder IDs
-        const eventsWithFolders = events.filter(event => 
-          event.folderId && event.folderId !== "your_" + event.title.toLowerCase().replace(/\s+/g, '_') + "_folder_id_here"
-        );
-        
-        if (eventsWithFolders.length === 0) {
-          console.warn('No events with valid folder IDs found. Please add your Google Drive folder IDs to the events array.');
-          setLoading(false);
-          return;
-        }
-        
-        console.log(`Loading images for ${eventsWithFolders.length} events...`);
-        const imageMap = await fetchAllEventImages(eventsWithFolders);
-        console.log('📊 Image map received:', imageMap);
-        setEventImages(imageMap);
-        console.log('✅ State updated with images');
-        
-      } catch (err) {
-        console.error('❌ Failed to load images:', err);
-        setError('Failed to load images from Google Drive. Please check your API key and folder permissions.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadImages();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty array = run once on mount
-
-  // Helper function to get images for an event
+  // Helper function to get image paths for an event
   const getEventImages = (event) => {
-    console.log(`🔍 Getting images for event ${event.id} (${event.title})`);
-    const driveImages = eventImages[event.id];
-    console.log(`📁 Drive images for event ${event.id}:`, driveImages);
-    
-    if (driveImages && driveImages.length > 0) {
-      // Use Google Drive images, map to the downloadUrl
-      console.log(`✅ Using ${driveImages.length} Google Drive images for ${event.title}`);
-      return driveImages.map(img => img.downloadUrl);
+    if (event.images && event.images.length > 0) {
+      // Map filenames to full paths
+      return event.images.map(filename => `/events/${event.folder}/${filename}`);
     }
-    
-    // Return empty array if no Google Drive images available
-    console.log(`📁 No Google Drive images found for ${event.title}`);
+    // Return empty array if no images
     return [];
   };
 
@@ -257,19 +208,6 @@ const Gallery = () => {
         <h1>COMPSA Events Gallery</h1>
         <p>Discover memorable moments from our community events</p>
       </header>
-
-      {loading && (
-        <div className="loading-container">
-          <p>Loading images from Google Drive...</p>
-        </div>
-      )}
-
-      {error && (
-        <div className="error-container">
-          <p>⚠️ {error}</p>
-          <p>Falling back to placeholder images.</p>
-        </div>
-      )}
 
       <div className="events-slider-container">
         {events.map((event) => {
